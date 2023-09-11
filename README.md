@@ -16,9 +16,12 @@ git clone https://github.com/mingzuozhibi/mzzb-project ~/mzzb-project
 tee ~/.mzzbrc <<EOF
 alias app='bash app.sh'
 alias cdm='cd ~/mzzb-project'
+alias dk='sudo docker'
+alias dki='sudo docker image'
+alias dks='sudo service docker'
 EOF
-echo "source ~/.mzzbrc" >> ~/.profile
 source ~/.mzzbrc
+echo "source ~/.mzzbrc" >> ~/.profile
 ```
 
 ### 安装 docker 环境

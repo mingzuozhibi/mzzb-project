@@ -25,45 +25,50 @@ function wait_for_started {
 }
 
 function help {
+    echo "usage:  app purge"
     echo "usage:  app setup"
+    echo "usage:  app build"
+    echo "usage:  app clean"
     echo "usage:  app start"
     echo "usage:  app stop"
     echo "usage:  app logs"
     echo "usage:  app bash"
-    echo "usage:  app pull"
-    echo "usage:  app build"
-    echo "usage:  app clean"
 }
 
 # 主要程序
 case $Cmd in
+purge)
+    exec sudo rm -rf $Pwd/disk
+    ;;
 setup)
-    exec sudo rm -rf disk
-    exec mkdir -p disk
+    if [ ! -d $Pwd/disk ]; then
+        exec mkdir -p $Pwd/disk
+        first="true"
+    fi
     exec bash $0 build
-    echo "Waiting for MySQL to start" && wait_for_started
-    load $Pwd/sqls/setup.sql
-    [ -r $Pwd/sqls/backup.sql ] &&
-        load $Pwd/sqls/backup.sql mzzb_server
-    ;;
-start | stop | logs)
-    sudo docker $Cmd $App
-    ;;
-bash)
-    exec sudo docker exec -it $App bash
-    ;;
-pull)
-    exec sudo docker pull mysql:8.0-debian
+    if [ "$first" == "true" ]; then
+        echo "Waiting for MySQL to start" && wait_for_started
+        load $Pwd/sqls/setup.sql
+        [ -r $Pwd/sqls/backup.sql ] &&
+            load $Pwd/sqls/backup.sql mzzb_server
+    fi
     ;;
 build)
     exec sudo docker build -t $Img $Pwd
     exec sudo docker rm -f $App
     exec sudo docker run --name $App \
         --network net-mzzb \
+        --hostname soft-mysql \
         -v $Pwd/disk/data:/var/lib/mysql \
         -e MYSQL_ROOT_PASSWORD=$Key \
         -p 3306:3306 \
         -d $Img
+    ;;
+start | stop | logs)
+    sudo docker $Cmd $App
+    ;;
+bash)
+    exec sudo docker exec -it $App bash
     ;;
 *)
     help

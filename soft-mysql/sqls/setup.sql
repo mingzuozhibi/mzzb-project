@@ -1,9 +1,9 @@
 DROP DATABASE IF EXISTS mzzb_server;
-DROP USER IF EXISTS 'mzzb_server'@'localhost';
+DROP USER IF EXISTS 'mzzb_server'@'%';
 
 CREATE DATABASE mzzb_server;
-CREATE USER 'mzzb_server'@'localhost' IDENTIFIED BY 'mzzb_server';
-GRANT ALL PRIVILEGES ON mzzb_server.* TO 'mzzb_server'@'localhost';
+CREATE USER 'mzzb_server'@'%' IDENTIFIED BY 'mzzb_server';
+GRANT ALL PRIVILEGES ON mzzb_server.* TO 'mzzb_server'@'%';
 FLUSH PRIVILEGES;
 
 USE mzzb_server;

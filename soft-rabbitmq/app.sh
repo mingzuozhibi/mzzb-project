@@ -12,41 +12,43 @@ function exec {
 }
 
 function help {
+    echo "usage:  app purge"
     echo "usage:  app setup"
+    echo "usage:  app build"
+    echo "usage:  app clean"
     echo "usage:  app start"
     echo "usage:  app stop"
     echo "usage:  app logs"
     echo "usage:  app bash"
-    echo "usage:  app pull"
-    echo "usage:  app build"
-    echo "usage:  app clean"
 }
 
 # 主要程序
 case $Cmd in
+purge)
+    exec sudo rm -rf $Pwd/disk
+    ;;
 setup)
-    exec sudo rm -rf disk
-    exec mkdir -p disk
+    exec mkdir -p $Pwd/disk
     exec bash $0 build
-    ;;
-start | stop | logs)
-    sudo docker $Cmd $App
-    ;;
-bash)
-    exec sudo docker exec -it $App bash
-    ;;
-pull)
-    exec sudo docker pull mysql:8.0-debian
     ;;
 build)
     exec sudo docker build -t $Img $Pwd
     exec sudo docker rm -f $App
     exec sudo docker run --name $App \
         --network net-mzzb \
+        --hostname soft-rabbitmq \
+        -v $Pwd/conf.d:/etc/rabbitmq/conf.d:ro \
         -v $Pwd/disk/data:/var/lib/rabbitmq \
-        -p 5672:5672 \
+        -e RABBITMQ_DEFAULT_USER=admin \
+        -e RABBITMQ_DEFAULT_PASS=admin \
         -p 15672:15672 \
         -d $Img
+    ;;
+start | stop | logs)
+    sudo docker $Cmd $App
+    ;;
+bash)
+    exec sudo docker exec -it $App bash
     ;;
 *)
     help
