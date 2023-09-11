@@ -1,0 +1,58 @@
+.MzTable {
+  .table-caption {
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    line-height: 44px;
+
+    .caption-title {
+      font-size: 24px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .caption-extra {
+      margin-left: 12px;
+    }
+  }
+
+  .table {
+    margin-bottom: 0;
+
+    th.sortable {
+      cursor: pointer;
+      text-align: left;
+      padding-left: 20px;
+      background: url('./images/table-normal.gif') no-repeat center left;
+
+      &.asc {
+        background-image: url('./images/table-asc.gif');
+      }
+
+      &.desc {
+        background-image: url('./images/table-desc.gif');
+      }
+    }
+
+    tr.debug {
+      font-style: italic;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    .table > thead > tr > th,
+    .table > tbody > tr > th,
+    .table > tfoot > tr > th,
+    .table > thead > tr > td,
+    .table > tbody > tr > td,
+    .table > tfoot > tr > td {
+      padding: 5px;
+    }
+  }
+
+  .empty-warpper {
+    padding: 16px 16px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+}

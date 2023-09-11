@@ -1,0 +1,25 @@
+@mixin columnCenter() {
+  text-align: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@mixin columnHide($w_hd) {
+  @media screen and (max-width: $w_hd) {
+    display: none;
+  }
+}
+
+@mixin columnPcHd($w_pc, $w_hd) {
+  width: $w_pc;
+  @media screen and (max-width: $w_hd) {
+    display: none;
+  }
+}
+
+@mixin columnPcMo($w_pc, $w_mo) {
+  width: $w_pc;
+  @media screen and (max-width: 600px) {
+    width: $w_mo;
+  }
+}

@@ -1,0 +1,15 @@
+.all-columns {
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  .view-all {
+    min-width: 200%;
+
+    table {
+      th,
+      td {
+        display: table-cell !important;
+      }
+    }
+  }
+}
