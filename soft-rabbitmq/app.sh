@@ -15,7 +15,6 @@ function help {
     echo "usage:  app purge"
     echo "usage:  app setup"
     echo "usage:  app build"
-    echo "usage:  app clean"
     echo "usage:  app start"
     echo "usage:  app stop"
     echo "usage:  app logs"
