@@ -10,32 +10,21 @@ function exec {
 }
 
 function call {
-    [ -r soft-rabbitmq/app.sh ] &&
-        exec bash soft-rabbitmq/app.sh $1
-    [ -r soft-mysql/app.sh ] &&
-        exec bash soft-mysql/app.sh $1
-    [ -r mzzb-server/app.sh ] &&
-        exec bash mzzb-server/app.sh $1
-    [ -r mzzb-ui/app.sh ] &&
-        exec bash mzzb-ui/app.sh $1
+    for path in soft-mysql soft-rabbitmq mzzb-server mzzb-ui; do
+        [ -r $path/app.sh ] && exec bash $path/app.sh $1
+    done
 }
 
 function back {
-    [ -r mzzb-ui/app.sh ] &&
-        exec bash mzzb-ui/app.sh $1
-    [ -r mzzb-server/app.sh ] &&
-        exec bash mzzb-server/app.sh $1
-    [ -r soft-mysql/app.sh ] &&
-        exec bash soft-mysql/app.sh $1
-    [ -r soft-rabbitmq/app.sh ] &&
-        exec bash soft-rabbitmq/app.sh $1
+    for path in mzzb-ui mzzb-server soft-rabbitmq soft-mysql; do
+        [ -r $path/app.sh ] && exec bash $path/app.sh $1
+    done
 }
 
 function help {
     echo "usage:  app purge"
     echo "usage:  app setup"
     echo "usage:  app build"
-    echo "usage:  app clean"
     echo "usage:  app start"
     echo "usage:  app stop"
 }
@@ -49,16 +38,20 @@ purge)
     call $Cmd
     ;;
 setup)
-    [ "$2" == "-f" ] && exec bash $0 purge
+    [ "$2" == "-f" ] && exec bash $Pwd/app.sh purge
     [ $(sudo docker network ls | grep net-mzzb | wc -l) -eq 0 ] &&
         exec sudo docker network create net-mzzb
     call $Cmd
     ;;
-clean)
-    exec sudo docker image prune -f
-    ;;
-build | start | stop | status)
+build)
+    back stop
     call $Cmd
+    ;;
+start)
+    call $Cmd
+    ;;
+stop)
+    back $Cmd
     ;;
 *)
     help

@@ -15,7 +15,6 @@ function help {
     echo "usage:  app purge"
     echo "usage:  app setup"
     echo "usage:  app build"
-    echo "usage:  app clean"
     echo "usage:  app start"
     echo "usage:  app stop"
     echo "usage:  app logs"
@@ -28,12 +27,12 @@ purge)
     exec sudo rm -rf $Pwd/disk
     ;;
 setup)
-    exec mkdir -p $Pwd/disk
-    exec bash $0 build
+    exec mkdir -p $Pwd/disk/www
+    exec cd $Pwd && yarn && yarn build
+    exec cp $Pwd/build/* $Pwd/disk/www -r
+    exec bash $Pwd/app.sh build
     ;;
 build)
-    exec cd $Pwd && yarn && yarn build
-    exec cp $Pwd/build $Pwd/disk/www -r
     exec sudo docker build -t $Img $Pwd
     exec sudo docker rm -f $App
     exec sudo docker run -it --name $App \
