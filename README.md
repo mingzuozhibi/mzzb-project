@@ -89,6 +89,16 @@ source ~/.mzzbrc
 echo "source ~/.mzzbrc" >> ~/.profile
 ```
 
+### 配置开发代理
+
+```shell
+sudo vim /etc/hosts
+
+127.0.0.1       app-soft-mysql
+127.0.0.1       app-soft-rabbitmq
+127.0.0.1       app-mzzb-server
+```
+
 ### 获取项目代码
 
 ```shell
@@ -105,6 +115,21 @@ app setup
 ### 启动与停止
 
 ```shell
+cd "<项目目录>"
 app start
 app stop
+```
+
+### 测试与开发
+
+```shell
+cd "<项目目录>"
+app dev
+
+cd "<mzzb-server>"
+mvn spring-boot:run
+
+cd "<mzzb-ui>"
+yarn install
+yarn start
 ```

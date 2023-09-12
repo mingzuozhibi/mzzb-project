@@ -40,6 +40,7 @@ build)
         --network net-mzzb \
         --hostname mzzb-server \
         -v $Pwd/disk:/opt/app \
+        -p 9000:9000 \
         -d $Img
     ;;
 start | stop | logs)

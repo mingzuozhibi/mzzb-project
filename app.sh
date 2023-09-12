@@ -53,6 +53,11 @@ start)
 stop)
     back $Cmd
     ;;
+dev)
+    for path in soft-mysql soft-rabbitmq; do
+        [ -r $path/app.sh ] && exec bash $path/app.sh setup
+    done
+    ;;
 *)
     help
     ;;
