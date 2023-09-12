@@ -6,7 +6,11 @@ Cmd=${1:-help} && shift
 Tag=soft-mysql
 Img=img-$Tag
 App=app-$Tag
+
+Dbn=mzzb_server
 Key=fuhaiwei
+Bak=$Pwd/baks/backup.sql
+Max=20
 
 # 函数定义
 function exec {
@@ -37,6 +41,7 @@ purge)
 setup)
     [ "$1" == "-f" ] && main purge
     [ ! -d $Pwd/disk ] && setup="true"
+    exec mkdir -p $Pwd/baks/date
     exec mkdir -p $Pwd/disk/data
     main build
     [ "$setup" == true ] && main bash /opt/app/setup.sh
@@ -70,6 +75,12 @@ bash)
     else
         exec sudo docker exec $App bash $@
     fi
+    ;;
+save)
+    echo "Dumping mysql database $Dbn to $Bak"
+    sudo docker exec $App mysqldump -uroot -p$Key $Dbn >$Bak 2>/dev/null
+    exec cp $Bak "$Pwd/baks/date/$(date '+%Y%m%d_%H%M%S').sql"
+    cd $Pwd/baks/date && ls | xargs -n 1 | head -n -$Max | xargs -n 1 -rt rm
     ;;
 *)
     help
