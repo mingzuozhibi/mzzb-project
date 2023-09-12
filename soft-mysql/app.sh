@@ -2,7 +2,7 @@
 
 # 环境变量
 Pwd=$(realpath $(dirname $0))
-Cmd=${1:-help}
+Cmd=${1:-help} && shift
 Img=img-soft-mysql
 App=app-soft-mysql
 Key=fuhaiwei
@@ -12,16 +12,8 @@ function exec {
     echo -e "\033[36;40m >> RUN: $* \033[0m" && $@
 }
 
-function load {
-    echo "Load sql file: $1"
-    mysql -uroot -p$Key -h127.0.0.1 $2 <$1
-}
-
-function wait_for_started {
-    while /bin/true; do
-        sleep 1
-        mysqladmin -h127.0.0.1 ping >/dev/null 2>&1 && break
-    done
+function main {
+    echo -e "\033[33m >> RUN: $Pwd/app.sh $* \033[0m" && bash $Pwd/app.sh $@
 }
 
 function help {
@@ -40,17 +32,11 @@ purge)
     exec sudo rm -rf $Pwd/disk
     ;;
 setup)
-    if [ ! -d $Pwd/disk ]; then
-        exec mkdir -p $Pwd/disk
-        first="true"
-    fi
-    exec bash $Pwd/app.sh build
-    if [ "$first" == "true" ]; then
-        echo "Waiting for MySQL to start" && wait_for_started
-        load $Pwd/sqls/setup.sql
-        [ -r $Pwd/sqls/backup.sql ] &&
-            load $Pwd/sqls/backup.sql mzzb_server
-    fi
+    [ "$1" == "-f" ] && main purge
+    [ ! -d $Pwd/disk ] && setup="true"
+    [ "$setup" == true ] && exec mkdir -p $Pwd/disk
+    main build
+    [ "$setup" == true ] && main bash /opt/app/setup.sh
     ;;
 build)
     exec sudo docker build -t $Img $Pwd
@@ -67,7 +53,11 @@ start | stop | logs)
     sudo docker $Cmd $App
     ;;
 bash)
-    exec sudo docker exec -it $App bash
+    if [ $# -eq 0 ]; then
+        exec sudo docker exec -it $App bash
+    else
+        exec sudo docker exec $App bash $@
+    fi
     ;;
 *)
     help

@@ -1,2 +1,3 @@
 /disk
-/sqls/backup.sql
+/backup
+/app/sqls/backup.sql
