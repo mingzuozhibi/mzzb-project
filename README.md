@@ -17,7 +17,7 @@
 
 ### 安装运行文档
 
-- 本文档以 Debian-11 系统为例进行说明
+- 本文档以 Debian 系统为例进行说明
 - 请确保使用的 Shell 是 Bash v5.x
 - 您需要安装好以下软件
   - Git v2.30.x
@@ -28,7 +28,26 @@
   - Yarn 1.22.x
   - Docker 24.x
 
+### 安装 Wsl
+
+如果您使用 Linux 物理机或虚拟机，则不需要安装 Wsl
+
+以管理员身份运行 PowerShell（Windows 10）
+
+```powershell
+dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+
+dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+
+wsl --install Debian
+wsl --set-version Debian 2
+
+# 重新启动计算机
+```
+
 ### 安装 Git
+
+_注意：此后命令不再使用 PowerShell，而是使用 Debian_
 
 ```shell
 sudo apt install git bash-completion -y
