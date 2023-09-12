@@ -42,6 +42,12 @@ public class AdminController extends BaseController {
     @Autowired
     private DiscRepository discRepository;
 
+    @PostMapping("/api/admin/callAutoTask")
+    public String callAutoTask() {
+        startAutoTask();
+        return dataResult(true);
+    }
+
     @Scheduled(cron = "0 0 * * * ?")
     @GetMapping("/admin/startAutoTask")
     public void startAutoTask() {

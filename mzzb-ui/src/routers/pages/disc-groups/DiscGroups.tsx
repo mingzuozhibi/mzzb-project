@@ -1,6 +1,7 @@
 import { useAppSelector } from '#CA/hooks'
 import { MzHeader } from '#CC/header/MzHeader'
 import { MzColumn, MzTable } from '#CC/table/MzTable'
+import { useAjax } from '#CH/useAjax'
 import { useLocal, useSession } from '#CH/useLocal'
 import { useData } from '#CH/useOnce'
 import { EditOutlined, UnorderedListOutlined } from '@ant-design/icons'
@@ -22,6 +23,15 @@ export default function DiscGroups() {
 
   const [filter, setFilter] = useLocal('groups-filter', 'top')
   const [isMore, setIsMore] = useSession('groups-ismore', false)
+
+  const [isPost, doPost] = useAjax<boolean>('post')
+  const callAutoTask = () => {
+    doPost('/api/admin/callAutoTask', '开始自动任务', {
+      onSuccess() {
+        navigate('/console#SERVER_CORE')
+      },
+    })
+  }
 
   const getPub = filter === 'top' && isMore === true
   const apiUrl = apiToGroups(`?filter=${getPub ? 'pub' : filter}`)
@@ -71,6 +81,12 @@ export default function DiscGroups() {
                 disabled: !hasBasic,
               },
             ],
+          },
+          {
+            key: 'K3',
+            label: '开始自动任务',
+            onClick: callAutoTask,
+            disabled: !hasBasic,
           },
         ]}
       />
