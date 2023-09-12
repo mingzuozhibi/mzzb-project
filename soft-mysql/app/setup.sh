@@ -7,7 +7,7 @@ Key=fuhaiwei
 
 # 函数定义
 function exec {
-    echo -e "\033[36;40m >> RUN: $* \033[0m" && $@
+    echo -e "\033[36;40m  >> $* \033[0m" && $@
 }
 
 function wait_for_started {

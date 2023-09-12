@@ -2,13 +2,18 @@
 
 # 环境变量
 Pwd=$(realpath $(dirname $0))
-Cmd=${1:-help}
-Img=img-soft-rabbitmq
-App=app-soft-rabbitmq
+Cmd=${1:-help} && shift
+Tag=soft-rabbitmq
+Img=img-$Tag
+App=app-$Tag
 
 # 函数定义
 function exec {
-    echo -e "\033[36;40m >> RUN: $* \033[0m" && $@
+    echo -e "\033[36;40m >> $* \033[0m" && $@
+}
+
+function main {
+    echo -e "\033[33m >> RUN: $Tag/app $* \033[0m" && bash $Pwd/app.sh $@
 }
 
 function help {
@@ -18,24 +23,27 @@ function help {
     echo "usage:  app start"
     echo "usage:  app stop"
     echo "usage:  app logs"
+    echo "usage:  app test"
     echo "usage:  app bash"
 }
 
 # 主要程序
 case $Cmd in
 purge)
+    main test >/dev/null && main stop
     exec sudo rm -rf $Pwd/disk
     ;;
 setup)
-    exec mkdir -p $Pwd/disk
-    exec bash $Pwd/app.sh build
+    [ "$1" == "-f" ] && main purge
+    exec mkdir -p $Pwd/disk/data
+    main build
     ;;
 build)
     exec sudo docker build -t $Img $Pwd
     exec sudo docker rm -f $App
     exec sudo docker run --name $App \
+        --hostname $Tag \
         --network net-mzzb \
-        --hostname soft-rabbitmq \
         -v $Pwd/conf.d:/etc/rabbitmq/conf.d:ro \
         -v $Pwd/disk/data:/var/lib/rabbitmq \
         -e RABBITMQ_DEFAULT_USER=admin \
@@ -45,10 +53,23 @@ build)
         -d $Img
     ;;
 start | stop | logs)
-    sudo docker $Cmd $App
+    exec sudo docker $Cmd $App
+    ;;
+test)
+    if [ $(sudo docker ps | grep $Tag | wc -l) -eq 1 ]; then
+        echo "$Tag is alive"
+        /bin/true
+    else
+        echo "$Tag is not alive"
+        /bin/false
+    fi
     ;;
 bash)
-    exec sudo docker exec -it $App bash
+    if [ $# -eq 0 ]; then
+        exec sudo docker exec -it $App bash
+    else
+        exec sudo docker exec $App bash $@
+    fi
     ;;
 *)
     help
