@@ -108,14 +108,14 @@ git clone https://github.com/mingzuozhibi/mzzb-project ~/mzzb-project
 ### 项目初始化
 
 ```shell
-cd "<项目目录>"
+cd ~/mzzb-project
 app setup
 ```
 
 ### 启动与停止
 
 ```shell
-cd "<项目目录>"
+cd ~/mzzb-project
 app start
 app stop
 ```
@@ -123,13 +123,13 @@ app stop
 ### 测试与开发
 
 ```shell
-cd "<项目目录>"
+cd ~/mzzb-project
 app dev
 
-cd "<mzzb-server>"
+cd ~/mzzb-project/mzzb-server
 mvn spring-boot:run
 
-cd "<mzzb-ui>"
+cd ~/mzzb-project/mzzb-ui
 yarn install
 yarn start
 ```
