@@ -3545,9 +3545,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001517, caniuse-lite@^1.0.30001520:
-  version "1.0.30001532"
-  resolved "https://mirrors.tencent.com/npm/caniuse-lite/-/caniuse-lite-1.0.30001532.tgz#c6a4d5d2da6d2b967f0ee5e12e7f680db6ad2fca"
-  integrity sha512-FbDFnNat3nMnrROzqrsg314zhqN5LGQ1kyyMk2opcrwGbVGpHRhgCWtAgD5YJUqNAiQ+dklreil/c3Qf1dfCTw==
+  version "1.0.30001533"
+  resolved "https://mirrors.tencent.com/npm/caniuse-lite/-/caniuse-lite-1.0.30001533.tgz#1180daeb2518b93c82f19b904d1fefcf82197707"
+  integrity sha512-9aY/b05NKU4Yl2sbcJhn4A7MsGwR1EPfW/nrqsnqVA0Oq50wpmPaGI+R1Z0UKlUl96oxUkGEOILWtOHck0eCWw==
 
 case-sensitive-paths-webpack-plugin@^2.4.0:
   version "2.4.0"
@@ -8393,9 +8393,9 @@ rc-switch@~4.1.0:
     rc-util "^5.30.0"
 
 rc-table@~7.33.1:
-  version "7.33.1"
-  resolved "https://mirrors.tencent.com/npm/rc-table/-/rc-table-7.33.1.tgz#172332b9286dc6476c1d467a8d6aba0ff5f17dcb"
-  integrity sha512-Tb7ygQ6V4x9JGvlvxCQoLwFrseIlFwGBdwoNOyC0DMfUF56qSKxkcibl1nFLl+Z5lbEWtZlRUqjuddZJyXwMfw==
+  version "7.33.2"
+  resolved "https://mirrors.tencent.com/npm/rc-table/-/rc-table-7.33.2.tgz#70b9af7bed050c15b7d2318a58af3589b412f97f"
+  integrity sha512-jbIic44hwJWn8rc+EsZKQeE/Z1B30dfNlgca4ebc+nNBxUUiDpbsMaJMh+asD5DTzWpMWV/uK6U0GNl9ITImtA==
   dependencies:
     "@babel/runtime" "^7.10.1"
     "@rc-component/context" "^1.4.0"
@@ -8488,9 +8488,9 @@ rc-util@^5.0.0, rc-util@^5.0.1, rc-util@^5.0.6, rc-util@^5.16.1, rc-util@^5.17.0
     react-is "^16.12.0"
 
 rc-virtual-list@^3.10.4, rc-virtual-list@^3.5.1, rc-virtual-list@^3.5.2:
-  version "3.10.5"
-  resolved "https://mirrors.tencent.com/npm/rc-virtual-list/-/rc-virtual-list-3.10.5.tgz#a203ca60bf3334e16193f641db1e99a48ae76574"
-  integrity sha512-Vc89TL3JHfRlLVQXVj5Hmv0dIflgwmHDcbjt9lrZjOG3wNUDkTF5zci8kFDU/CzdmmqgKu+CUktEpT10VUKYSQ==
+  version "3.10.6"
+  resolved "https://mirrors.tencent.com/npm/rc-virtual-list/-/rc-virtual-list-3.10.6.tgz#41ba9499ac030e607a013e98358a18618e42db11"
+  integrity sha512-GZNrR78idlrRCfejtbSzftO+rkYF13kcule6tVB2V++S3CoghMko4BUR5bv6aJWNCX7rMb3B2SsWRSj6tn1IdQ==
   dependencies:
     "@babel/runtime" "^7.20.0"
     classnames "^2.2.6"
