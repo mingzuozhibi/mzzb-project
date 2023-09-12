@@ -1,7 +1,3 @@
 # environment configuration
 security.password=admin
-rabbitmq.username=guest
-rabbitmq.password=guest
-rabbitmq.host=127.0.0.1
-rabbitmq.port=5672
 bcloud.apikey=<your key>
