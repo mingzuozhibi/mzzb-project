@@ -39,6 +39,12 @@ function help {
     echo "usage:  app dev"
 }
 
+# 前置依赖
+if [ "$(sudo service docker status)" == "Docker is not running ... failed!" ]; then
+   sudo service docker start && sleep 2
+fi
+
+
 # 主要程序
 case $Cmd in
 purge)
