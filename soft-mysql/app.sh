@@ -31,6 +31,7 @@ function help {
     echo "usage:  app test"
     echo "usage:  app bash"
     echo "usage:  app save"
+    echo "usage:  app load"
 }
 
 # 主要程序
@@ -82,6 +83,17 @@ save)
     sudo docker exec $App mysqldump -uroot -p$Key $Dbn >$Bak 2>/dev/null
     exec cp $Bak "$Pwd/baks/date/$(date '+%Y%m%d_%H%M%S').sql"
     cd $Pwd/baks/date && ls | xargs -n 1 | head -n -$Max | xargs -n 1 -rt rm
+    ;;
+load)
+    if [ $# -eq 0 ]; then
+        echo "Loading sql file $Bak to $Dbn"
+        sudo docker exec -i $App mysql -uroot -p$Key $Dbn <$Bak 2>/dev/null
+        echo "Done"
+    else
+        echo "Loading sql file $1 to $Dbn"
+        sudo docker exec -i $App mysql -uroot -p$Key $Dbn <$1 2>/dev/null
+        echo "Done"
+    fi
     ;;
 *)
     help
