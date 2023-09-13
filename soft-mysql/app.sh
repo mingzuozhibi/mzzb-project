@@ -74,7 +74,7 @@ bash)
     if [ $# -eq 0 ]; then
         exec sudo docker exec -it $App bash
     else
-        exec sudo docker exec $App bash $@
+        exec sudo docker exec $App $@
     fi
     ;;
 save)
