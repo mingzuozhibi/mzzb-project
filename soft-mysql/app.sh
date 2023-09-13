@@ -79,10 +79,15 @@ bash)
     fi
     ;;
 save)
-    echo "Dumping mysql database $Dbn to $Bak"
-    sudo docker exec $App mysqldump -uroot -p$Key $Dbn >$Bak 2>/dev/null
-    exec cp $Bak "$Pwd/baks/date/$(date '+%Y%m%d_%H%M%S').sql"
-    cd $Pwd/baks/date && ls | xargs -n 1 | head -n -$Max | xargs -n 1 -rt rm
+    if [ $# -eq 0 ]; then
+        echo "Dumping mysql database $Dbn to $Bak"
+        sudo docker exec $App mysqldump -uroot -p$Key $Dbn >$Bak 2>/dev/null
+        exec cp $Bak "$Pwd/baks/date/$(date '+%Y%m%d_%H%M%S').sql"
+        cd $Pwd/baks/date && ls | xargs -n 1 | head -n -$Max | xargs -n 1 -rt rm
+    else
+        echo "Dumping mysql database $Dbn to $1"
+        sudo docker exec $App mysqldump -uroot -p$Key $Dbn >$1 2>/dev/null
+    fi
     ;;
 load)
     if [ $# -eq 0 ]; then
