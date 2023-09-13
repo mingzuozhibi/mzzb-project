@@ -30,6 +30,7 @@ function help {
     echo "usage:  app logs"
     echo "usage:  app test"
     echo "usage:  app bash"
+    echo "usage:  app save"
 }
 
 # 主要程序
