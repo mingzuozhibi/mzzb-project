@@ -38,6 +38,7 @@ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux 
 
 dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 
+wsl --update
 wsl --install Debian
 wsl --set-version Debian 2
 
