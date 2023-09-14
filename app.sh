@@ -30,20 +30,27 @@ function back {
 }
 
 function help {
-    echo "usage:  app purge"
-    echo "usage:  app setup"
-    echo "usage:  app build"
-    echo "usage:  app start"
-    echo "usage:  app stop"
-    echo "usage:  app test"
-    echo "usage:  app dev"
+    echo "Usage:  app <cmd> [param1] ..."
+    echo ""
+    echo "Project Initialize"
+    echo "    purge    Clear all data"
+    echo "    setup    Compile and Build"
+    echo "    build    Build all image"
+    echo ""
+    echo "Operation and maintenance"
+    echo "    start    Run all containers"
+    echo "    stop     Stop all containers"
+    echo "    status   Check alive status"
+    echo ""
+    echo "Development and other"
+    echo "    dev      Run mysql and rabbitmq"
+    echo "    help     Display this help"
 }
 
 # 前置依赖
 if [ "$(sudo service docker status)" == "Docker is not running ... failed!" ]; then
-   sudo service docker start && sleep 2
+    sudo service docker start && sleep 2
 fi
-
 
 # 主要程序
 case $Cmd in
@@ -59,7 +66,6 @@ setup)
     call $Cmd
     ;;
 build)
-    back stop
     call $Cmd
     ;;
 start)
@@ -68,7 +74,7 @@ start)
 stop)
     back $Cmd
     ;;
-test)
+status)
     for path in soft-mysql soft-rabbitmq mzzb-server mzzb-ui; do
         bash $Pwd/$path/app.sh $Cmd
     done

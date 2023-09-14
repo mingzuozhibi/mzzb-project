@@ -17,20 +17,28 @@ function main {
 }
 
 function help {
-    echo "usage:  app purge"
-    echo "usage:  app setup"
-    echo "usage:  app build"
-    echo "usage:  app start"
-    echo "usage:  app stop"
-    echo "usage:  app logs"
-    echo "usage:  app test"
-    echo "usage:  app bash"
+    echo "Usage:  app <cmd> [param1] ..."
+    echo ""
+    echo "Project Initialize"
+    echo "    purge    Clear all data"
+    echo "    setup    Compile and Build"
+    echo "    build    Build all image"
+    echo ""
+    echo "Operation and maintenance"
+    echo "    start    Run all containers"
+    echo "    stop     Stop all containers"
+    echo "    status   Check alive status"
+    echo ""
+    echo "Development and other"
+    echo "    logs     Show container logs"
+    echo "    bash     Run command or bash"
+    echo "    help     Display this help"
 }
 
 # 主要程序
 case $Cmd in
 purge)
-    main test >/dev/null && main stop
+    main status >/dev/null && main stop
     exec sudo rm -rf $Pwd/disk
     ;;
 setup)
@@ -55,7 +63,7 @@ build)
 start | stop | logs)
     exec sudo docker $Cmd $App
     ;;
-test)
+status)
     if [ $(sudo docker ps | grep $Tag | wc -l) -eq 1 ]; then
         echo "$Tag is alive"
         /bin/true
@@ -68,7 +76,7 @@ bash)
     if [ $# -eq 0 ]; then
         exec sudo docker exec -it $App bash
     else
-        exec sudo docker exec $App $@
+        exec sudo docker exec -i $App $@
     fi
     ;;
 *)
