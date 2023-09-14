@@ -40,7 +40,7 @@ function help {
     echo ""
     echo "Development and other"
     echo "    logs     Show container logs"
-    echo "    bash     Run command or bash"
+    echo "    exec     Run command or bash"
     echo "    help     Display this help"
 }
 
@@ -56,7 +56,7 @@ setup)
     exec mkdir -p $Pwd/baks/date
     exec mkdir -p $Pwd/disk/data
     main build
-    [ "$setup" == true ] && main bash /opt/app/setup.sh
+    [ "$setup" == true ] && main exec bash /opt/app/setup.sh
     ;;
 build)
     exec sudo docker build -t $Img $Pwd
@@ -81,7 +81,7 @@ status)
         /bin/false
     fi
     ;;
-bash)
+exec)
     if [ $# -eq 0 ]; then
         exec sudo docker exec -it $App bash
     else

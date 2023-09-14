@@ -10,13 +10,6 @@ function exec {
     echo -e "\033[36;40m  >> $* \033[0m" && $@
 }
 
-function wait_for_started {
-    while /bin/true; do
-        sleep 1
-        [ "$(mysqladmin -uroot -p$Key ping 2>/dev/null)" == "mysqld is alive" ] && break
-    done
-}
-
 function load {
     echo "Loading sql file: $1"
     if [ -r $1 ]; then
@@ -27,6 +20,6 @@ function load {
 }
 
 # 主要程序
-echo "Waiting for MySQL to start" && wait_for_started
+bash $Pwd/wait_for_started.sh
 load $Pwd/sqls/setup.sql
 load $Pwd/sqls/backup.sql $Dbn
