@@ -5,31 +5,37 @@ Pwd=$(realpath $(dirname $0))
 Cmd=${1:-help} && shift
 
 # 函数定义
-function exec {
-    echo -e "\033[36;40m >> $* \033[0m" && $@
+function myfmt {
+    color=$1 && shift
+    echo -e "\033[${color}m$*\033[0m"
 }
 
-function main {
-    if [ $# -eq 1 ]; then
-        echo -e "\033[32m >> RUN: root/app $1 \033[0m" && bash $Pwd/app.sh $1
+function myrun {
+    myfmt "36;40" " >> RUN: $*" && $@
+}
+
+function mycmd {
+    if [ "$1" != "-s" ]; then
+        bash $Pwd/app.sh $@
     else
-        echo -e "\033[33m >> RUN: $1/app $2 \033[0m" && bash $Pwd/$1/app.sh $2
+        path=$2 && shift 2 && bash $Pwd/$path/app.sh $@
     fi
 }
 
-function call {
-    for path in soft-mysql soft-rabbitmq mzzb-server mzzb-ui; do
-        main $path $1
-    done
+function mysub {
+    if [ "$1" != "-r" ]; then
+        for path in soft-mysql soft-rabbitmq mzzb-server mzzb-ui; do
+            mycmd -s $path $@
+        done
+    else
+        shift
+        for path in mzzb-ui mzzb-server soft-rabbitmq soft-mysql; do
+            mycmd -s $path $@
+        done
+    fi
 }
 
-function back {
-    for path in mzzb-ui mzzb-server soft-rabbitmq soft-mysql; do
-        main $path $1
-    done
-}
-
-function help {
+function myhelp {
     echo "Usage:  app <cmd> [param1] ..."
     echo ""
     echo "Project Initialize"
@@ -48,43 +54,55 @@ function help {
 }
 
 # 前置依赖
-if [ "$(sudo service docker status)" == "Docker is not running ... failed!" ]; then
-    sudo service docker start && sleep 2
+if [ "$(sudo service docker status)" != "Docker is running." ]; then
+    sudo service docker start
+    while /bin/true; do
+        [ "$(sudo service docker status)" == "Docker is running." ] && break
+        sleep 1
+    done
 fi
+
+myfmt "32" " >> CMD: root/app $Cmd $*"
 
 # 主要程序
 case $Cmd in
 purge)
     [ $(sudo docker network ls | grep net-mzzb | wc -l) -lt 0 ] &&
-        exec sudo docker network rm net-mzzb
-    back $Cmd
+        myrun sudo docker network rm net-mzzb
+    mysub -r $Cmd
     ;;
 setup)
-    [ "$1" == "-f" ] && main purge
+    [ "$1" == "-f" ] && mycmd purge
     [ $(sudo docker network ls | grep net-mzzb | wc -l) -eq 0 ] &&
-        exec sudo docker network create net-mzzb
-    call $Cmd
+        myrun sudo docker network create net-mzzb
+    mysub $Cmd
     ;;
 build)
-    call $Cmd
+    mysub $Cmd
     ;;
 start)
-    call $Cmd
+    mysub $Cmd
     ;;
 stop)
-    back $Cmd
+    mysub -r $Cmd
     ;;
 status)
     for path in soft-mysql soft-rabbitmq mzzb-server mzzb-ui; do
-        bash $Pwd/$path/app.sh $Cmd
+        mycmd -s $path $Cmd >/dev/null && alive="Alive" || alive="Exited"
+        printf "%-20s %s\n" "$path" "$alive"
     done
     ;;
 dev)
     for path in soft-mysql soft-rabbitmq; do
-        [ -r $path/app.sh ] && exec bash $path/app.sh setup
+        mycmd -s $path setup
     done
     ;;
+help)
+    myhelp
+    ;;
 *)
-    help
+    echo "Unknown command: app $Cmd $*"
+    echo ""
+    myhelp
     ;;
 esac

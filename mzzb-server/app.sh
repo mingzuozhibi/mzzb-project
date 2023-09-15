@@ -8,25 +8,30 @@ Img=img-$Tag
 App=app-$Tag
 
 # 函数定义
-function exec {
-    echo -e "\033[36;40m >> $* \033[0m" && $@
+function myfmt {
+    color=$1 && shift
+    echo -e "\033[${color}m$*\033[0m"
 }
 
-function main {
-    echo -e "\033[33m >> RUN: $Tag/app $* \033[0m" && bash $Pwd/app.sh $@
+function myrun {
+    myfmt "36;40" " >> RUN: $*" && $@
 }
 
-function help {
+function mycmd {
+    bash $Pwd/app.sh $@
+}
+
+function myhelp {
     echo "Usage:  app <cmd> [param1] ..."
     echo ""
     echo "Project Initialize"
-    echo "    purge    Clear all data"
+    echo "    purge    Clear the data"
     echo "    setup    Compile and Build"
-    echo "    build    Build all image"
+    echo "    build    Build the image"
     echo ""
     echo "Operation and maintenance"
-    echo "    start    Run all containers"
-    echo "    stop     Stop all containers"
+    echo "    start    Run the container"
+    echo "    stop     Stop the container"
     echo "    status   Check alive status"
     echo ""
     echo "Development and other"
@@ -35,24 +40,28 @@ function help {
     echo "    help     Display this help"
 }
 
+myfmt "33" " >> CMD: $Tag/app $Cmd $*"
+
 # 主要程序
 case $Cmd in
 purge)
-    main status >/dev/null && main stop
-    exec sudo rm -rf $Pwd/disk
+    mycmd status >/dev/null && mycmd stop
+    myrun sudo rm -rf $Pwd/disk
     ;;
 setup)
-    [ "$1" == "-f" ] && main purge
-    exec mkdir -p $Pwd/disk
-    exec cd $Pwd && mvn clean package
-    exec cp $Pwd/target/*.jar $Pwd/disk/app.jar
-    exec cp $Pwd/etc $Pwd/disk -r
-    main build
+    [ "$1" == "-f" ] && mycmd purge
+    myrun mkdir -p $Pwd/disk
+    myrun cd $Pwd && mvn clean package
+    myrun cp $Pwd/target/*.jar $Pwd/disk/app.jar
+    myrun cp $Pwd/etc $Pwd/disk -r
+    mycmd build
     ;;
 build)
-    exec sudo docker build -t $Img $Pwd
-    exec sudo docker rm -f $App
-    exec sudo docker run -it --name $App \
+    myrun sudo docker build -t $Img $Pwd
+    [ $(sudo docker ps -a | grep $Tag | wc -l) -eq 1 ] &&
+        myrun sudo docker rm -f $App
+    sudo docker exec app-soft-mysql bash /opt/app/wait_for_started.sh
+    myrun sudo docker run -it --name $App \
         --hostname $Tag \
         --network net-mzzb \
         -v $Pwd/disk:/opt/app \
@@ -61,10 +70,10 @@ build)
     ;;
 start)
     sudo docker exec app-soft-mysql bash /opt/app/wait_for_started.sh
-    exec sudo docker $Cmd $App
+    myrun sudo docker $Cmd $App
     ;;
 stop | logs)
-    exec sudo docker $Cmd $App
+    myrun sudo docker $Cmd $App
     ;;
 status)
     if [ $(sudo docker ps | grep $Tag | wc -l) -eq 1 ]; then
@@ -77,12 +86,17 @@ status)
     ;;
 exec)
     if [ $# -eq 0 ]; then
-        exec sudo docker exec -it $App bash
+        myrun sudo docker exec -it $App bash
     else
-        exec sudo docker exec -i $App $@
+        myrun sudo docker exec -i $App $@
     fi
     ;;
+help)
+    myhelp
+    ;;
 *)
-    help
+    echo "Unknown command: app $Cmd $*"
+    echo ""
+    myhelp
     ;;
 esac
