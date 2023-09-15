@@ -41,7 +41,8 @@ function myhelp {
     echo "Project Initialize"
     echo "    purge    Clear all data"
     echo "    setup    Compile and Build"
-    echo "    build    Build all image"
+    echo "    build    Build all images"
+    echo "    clean    Clean dangling images "
     echo ""
     echo "Operation and maintenance"
     echo "    start    Run all containers"
@@ -76,9 +77,14 @@ setup)
     [ $(sudo docker network ls | grep net-mzzb | wc -l) -eq 0 ] &&
         myrun sudo docker network create net-mzzb
     mysub $Cmd
+    mycmd clean
     ;;
 build)
     mysub $Cmd
+    mycmd clean
+    ;;
+clean)
+    myrun sudo docker image prune -f
     ;;
 start)
     mysub $Cmd
