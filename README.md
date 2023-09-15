@@ -99,6 +99,11 @@ tee ~/.mzzbrc <<EOF
 export PATH=~/.local/opt/nodejs/node-v18.17.1-linux-x64/bin:$PATH
 
 alias app='bash app.sh'
+alias mcp='mvn clean package'
+alias mcc='mvn clean compile'
+alias sbr='mvn spring-boot:run'
+alias ccr='mcc && sbr'
+
 alias cdp='cd ~/mzzb-project'
 alias cdm='cd ~/mzzb-project/soft-mysql'
 alias cdr='cd ~/mzzb-project/soft-rabbitmq'
