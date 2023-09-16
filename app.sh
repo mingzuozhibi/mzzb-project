@@ -58,8 +58,8 @@ function myhelp {
 if [ "$(sudo service docker status)" != "Docker is running." ]; then
     sudo service docker start
     while /bin/true; do
-        [ "$(sudo service docker status)" == "Docker is running." ] && break
         sleep 1
+        [ "$(sudo service docker status)" == "Docker is running." ] && break
     done
 fi
 
