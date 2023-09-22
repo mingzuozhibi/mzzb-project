@@ -54,6 +54,8 @@ setup)
     myrun cd $Pwd && mvn clean package
     myrun cp $Pwd/target/*.jar $Pwd/disk/app.jar
     myrun cp $Pwd/etc $Pwd/disk -r
+    [ -r $Pwd/disk/etc/app.properties ] ||
+        myrun cp $Pwd/disk/etc/app.properties.default $Pwd/disk/etc/app.properties
     mycmd build
     ;;
 build)
