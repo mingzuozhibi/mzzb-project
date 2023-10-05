@@ -47,6 +47,7 @@ function myhelp {
     echo "Operation and maintenance"
     echo "    start    Run all containers"
     echo "    stop     Stop all containers"
+    echo "    restart  Restart all containers"
     echo "    status   Check alive status"
     echo ""
     echo "Development and other"
@@ -91,6 +92,10 @@ start)
     ;;
 stop)
     mysub -r $Cmd
+    ;;
+restart)
+    mysub -r stop
+    mysub start
     ;;
 status)
     for path in soft-mysql soft-rabbitmq mzzb-server mzzb-ui; do

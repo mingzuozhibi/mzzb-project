@@ -49,6 +49,15 @@ function myhelp {
     echo "    help     Display this help"
 }
 
+# 前置依赖
+if [ "$(sudo service docker status)" != "Docker is running." ]; then
+    sudo service docker start
+    while /bin/true; do
+        sleep 1
+        [ "$(sudo service docker status)" == "Docker is running." ] && break
+    done
+fi
+
 myfmt "33" " >> CMD: $Tag/app $Cmd $*"
 
 # 主要程序
