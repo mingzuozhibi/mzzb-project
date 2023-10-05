@@ -1,0 +1,56 @@
+[user]
+	name = fuhaiwei
+	email = fuhaiwei@126.com
+[core]
+	excludesfile = ~/.gitignore
+	autocrlf = input
+	editor = vim
+[color]
+	ui = true
+[init]
+	defaultBranch = master
+[push]
+	default = simple
+[pull]
+	ff = only
+[alias]
+	aa = add .
+	cm = commit -m
+	ce = commit --amend
+	st = status
+	di = diff
+	dc = diff --cached
+
+	rt = reset
+	rd = reset --hard
+	ri = rebase -i
+	re = rebase
+	rs = restore -S
+	rw = restore -W
+
+	sw = switch
+	br = branch
+	rv = revert
+	co = checkout
+	cp = cherry-pick
+	fp = format-patch
+
+	sh = stash
+	nd = clean -nd
+	fd = clean -fd
+	wc = whatchanged -1
+	pa = push origin master develop --tags
+	fa = fetch --prune --prune-tags
+
+	hi = log --pretty=format:'%h %ad | %s [%an]' --date=short -7
+	ht = log --pretty=format:'%h %ad %d' --date=short -7 --tags --simplify-by-decoration
+	hr = reflog show -7
+	hg = hi --graph
+	hii = hi -20
+	htt = ht -20
+	hrr = hr -20
+
+	ve = config -e
+	vg = config -e --global
+	run = filter-branch -f --tree-filter
+	tcs = tag --column --sort=version:refname
