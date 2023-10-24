@@ -40,9 +40,10 @@ function myhelp {
     echo ""
     echo "Project Initialize"
     echo "    purge    Clear all data"
-    echo "    setup    Compile and Build"
-    echo "    build    Build all images"
-    echo "    clean    Clean dangling images "
+    echo "    setup    Build and create"
+    echo "    fetch    Pull all upstream images"
+    echo "    build    Building all images"
+    echo "    create   Initialize all containers"
     echo ""
     echo "Operation and maintenance"
     echo "    start    Run all containers"
@@ -74,13 +75,18 @@ purge)
     mysub -r $Cmd
     ;;
 setup)
-    [ "$1" == "-f" ] && mycmd purge
+    mysub -r stop
     [ $(sudo docker network ls | grep net-mzzb | wc -l) -eq 0 ] &&
         myrun sudo docker network create net-mzzb
+    mysub $Cmd $1
+    mycmd clean
+    ;;
+fetch | build)
     mysub $Cmd
     mycmd clean
     ;;
-build)
+create)
+    mysub -r stop
     mysub $Cmd
     mycmd clean
     ;;
