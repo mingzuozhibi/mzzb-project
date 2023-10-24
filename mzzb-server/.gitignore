@@ -2,7 +2,7 @@
 *.log
 /var
 /etc/app.properties
-/disk
+/volume
 
 ### Spring Boot ###
 HELP.md

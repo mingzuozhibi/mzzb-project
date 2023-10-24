@@ -6,7 +6,6 @@ Tag=$1 && shift
 
 # Start release
 cd $Pwd || exit
-git stash
 git flow release start "v$Tag"
 
 # Set Mvn Version
@@ -23,4 +22,3 @@ cd $Pwd || exit
 git add .
 git commit -m "chore: Set version to v$Tag"
 git flow release finish "v$Tag"
-git stash apply

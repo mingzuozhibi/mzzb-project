@@ -11,6 +11,6 @@ cp gitconfig ~/.gitconfig
 cp npmrc ~/.npmrc
 
 # Mvn Config
-mkdir ~/.m2
+mkdir -p ~/.m2
 cp settings.xml ~/.m2/settings.xml
 ```

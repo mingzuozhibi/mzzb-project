@@ -1,38 +1,30 @@
 #!/usr/bin/env bash
 
-# 环境变量
+# Variable
+Tag=soft-mysql
+Upstream=mysql:8.0-debian
+
 Pwd=$(realpath $(dirname $0))
 Cmd=${1:-help} && shift
-Tag=soft-mysql
-Img=img-$Tag
-App=app-$Tag
+ImgName=img-$Tag
+AppName=app-$Tag
 
-Dbn=mzzb_server
-Key=fuhaiwei
-Bak=$Pwd/baks/backup.sql
-Max=20
+DbName=mzzb_server
+DbPass=fuhaiwei
+BakFile=$Pwd/backup/backup.sql
+Archive=$Pwd/backup/archive
+MaxFile=20
 
-# 函数定义
-function myfmt {
-    color=$1 && shift
-    echo -e "\033[${color}m$*\033[0m"
-}
-
-function myrun {
-    myfmt "36;40" " >> RUN: $*" && $@
-}
-
-function mycmd {
-    bash $Pwd/app.sh $@
-}
-
-function myhelp {
+# Main Function
+function main_help {
     echo "Usage:  app <cmd> [param1] ..."
     echo ""
     echo "Project Initialize"
     echo "    purge    Clear the data"
-    echo "    setup    Compile and Build"
-    echo "    build    Build the image"
+    echo "    setup    Build and create"
+    echo "    fetch    Pull upstream image"
+    echo "    build    Building an image"
+    echo "    create   Initialize container"
     echo ""
     echo "Operation and maintenance"
     echo "    start    Run the container"
@@ -49,90 +41,54 @@ function myhelp {
     echo "    help     Display this help"
 }
 
-# 前置依赖
-if [ "$(sudo service docker status)" != "Docker is running." ]; then
-    sudo service docker start
-    while /bin/true; do
-        sleep 1
-        [ "$(sudo service docker status)" == "Docker is running." ] && break
-    done
-fi
+function main_save {
+    if [ $# -eq 0 ]; then
+        [ -d $Archive ] || myrun mkdir $Archive -p
+        echo "Dumping mysql database $DbName to $BakFile"
+        sudo docker exec $AppName mysqldump -uroot -p$DbPass $DbName >$BakFile 2>/dev/null
+        myrun cp $BakFile "$Archive/$(date '+%Y%m%d_%H%M%S').sql"
+        cd $Archive && ls | xargs -n 1 | head -n -$MaxFile | xargs -n 1 -rt rm
+    else
+        target_file=$1 && shift
+        echo "Dumping mysql database $DbName to $target_file"
+        sudo docker exec $AppName mysqldump -uroot -p$DbPass $DbName >$target_file 2>/dev/null
+    fi
+}
 
-myfmt "33" " >> CMD: $Tag/app $Cmd $*"
+function main_load {
+    if [ $# -eq 0 ]; then
+        echo "Loading sql file $BakFile to $DbName"
+        mycmd exec mysql -uroot -p$DbPass $DbName <$BakFile
+        echo "Done"
+    else
+        target_file=$1 && shift
+        echo "Loading sql file $target_file to $DbName"
+        mycmd exec mysql -uroot -p$DbPass $DbName <$target_file
+        echo "Done"
+    fi
+}
 
-# 主要程序
-case $Cmd in
-purge)
-    mycmd status >/dev/null && mycmd stop
-    myrun sudo rm -rf $Pwd/disk
-    ;;
-setup)
-    [ "$1" == "-f" ] && mycmd purge
-    [ ! -d $Pwd/disk ] && setup="true"
-    myrun mkdir -p $Pwd/baks/date
-    myrun mkdir -p $Pwd/disk/data
-    mycmd build
-    [ "$setup" == true ] && mycmd exec bash /opt/app/setup.sh
-    ;;
-build)
-    myrun sudo docker build -t $Img $Pwd
-    [ $(sudo docker ps -a | grep $Tag | wc -l) -eq 1 ] &&
-        myrun sudo docker rm -f $App
-    myrun sudo docker run --name $App \
+# Hook Function
+function pre_setup {
+    # Setup mysql data dir
+    myrun mkdir $Pwd/volume/mysql -p
+    # Setup script and sqls
+    myrun cp $Pwd/app $Pwd/volume -r
+}
+
+function post_setup {
+    # Load setup.sql and backup.sql
+    mycmd exec bash /opt/app/load_sqls_on_setup.sh
+}
+
+function docker_run {
+    myrun sudo docker run --name $AppName \
         --hostname $Tag \
         --network net-mzzb \
-        -v $Pwd/disk/data:/var/lib/mysql \
-        -e MYSQL_ROOT_PASSWORD=$Key \
+        -v $Pwd/volume/mysql:/var/lib/mysql \
+        -e MYSQL_ROOT_PASSWORD=$DbPass \
         -p 3306:3306 \
-        -d $Img
-    ;;
-start | stop | logs)
-    myrun sudo docker $Cmd $App
-    ;;
-status)
-    if [ $(sudo docker ps | grep $Tag | wc -l) -eq 1 ]; then
-        echo "$Tag is alive"
-        /bin/true
-    else
-        echo "$Tag is not alive"
-        /bin/false
-    fi
-    ;;
-exec)
-    if [ $# -eq 0 ]; then
-        myrun sudo docker exec -it $App bash
-    else
-        myrun sudo docker exec -i $App $@
-    fi
-    ;;
-save)
-    if [ $# -eq 0 ]; then
-        echo "Dumping mysql database $Dbn to $Bak"
-        sudo docker exec $App mysqldump -uroot -p$Key $Dbn >$Bak 2>/dev/null
-        myrun cp $Bak "$Pwd/baks/date/$(date '+%Y%m%d_%H%M%S').sql"
-        cd $Pwd/baks/date && ls | xargs -n 1 | head -n -$Max | xargs -n 1 -rt rm
-    else
-        echo "Dumping mysql database $Dbn to $1"
-        sudo docker exec $App mysqldump -uroot -p$Key $Dbn >$1 2>/dev/null
-    fi
-    ;;
-load)
-    if [ $# -eq 0 ]; then
-        echo "Loading sql file $Bak to $Dbn"
-        mycmd exec mysql -uroot -p$Key $Dbn <$Bak 2>/dev/null
-        echo "Done"
-    else
-        echo "Loading sql file $1 to $Dbn"
-        mycmd exec mysql -uroot -p$Key $Dbn <$1 2>/dev/null
-        echo "Done"
-    fi
-    ;;
-help)
-    myhelp
-    ;;
-*)
-    echo "Unknown command: app $Cmd $*"
-    echo ""
-    myhelp
-    ;;
-esac
+        -d $ImgName
+}
+
+source $Pwd/../common.sh
