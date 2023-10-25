@@ -81,11 +81,11 @@ setup)
     mysub $Cmd $1
     mycmd clean
     ;;
-fetch | build)
+fetch | pull | build)
     mysub $Cmd
     mycmd clean
     ;;
-create)
+create | run)
     mysub -r stop
     mysub $Cmd
     mycmd clean

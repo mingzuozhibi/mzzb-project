@@ -18,6 +18,30 @@ function mytfn {
         myfmt "36;40" " >> RUN: $Tag/hook $*" && $@
 }
 
+function help_setup {
+    echo "Project Initialize"
+    echo "    purge    Clear the data"
+    echo "    setup    Build and create"
+    echo "    fetch    Pull upstream image"
+    echo "    build    Building an image"
+    echo "    create   Initialize container"
+}
+
+function help_start {
+    echo "Operation and maintenance"
+    echo "    start    Run the container"
+    echo "    stop     Stop the container"
+    echo "    status   Check alive status"
+}
+
+function help_ohter {
+    echo "Development and other"
+    echo "    logs     Show container logs"
+    echo "    bash     Attach to container"
+    echo "    exec     Run container command"
+    echo "    help     Display this help"
+}
+
 if [ "$(sudo service docker status)" != "Docker is running." ]; then
     sudo service docker start
     while /bin/true; do
@@ -49,14 +73,14 @@ setup)
     mycmd create
     [ "$first" == "true" ] && mytfn post_setup
     ;;
-fetch)
+fetch | pull)
     myrun sudo docker pull $Upstream
     ;;
 build)
     mytfn pre_build
     myrun sudo docker build -t $ImgName $Pwd
     ;;
-create)
+create | run)
     [ $(sudo docker ps -a | grep $AppName | wc -l) -eq 1 ] &&
         myrun sudo docker rm -f $AppName
     docker_run
@@ -73,12 +97,11 @@ status)
         /bin/false
     fi
     ;;
+bash)
+    myrun sudo docker exec -it $AppName bash
+    ;;
 exec)
-    if [ $# -eq 0 ]; then
-        myrun sudo docker exec -it $AppName bash
-    else
-        myrun sudo docker exec -i $AppName $@
-    fi
+    myrun sudo docker exec -i $AppName $@
     ;;
 *)
     main_fn="main_$Cmd"
