@@ -19,26 +19,19 @@ MaxFile=20
 function main_help {
     echo "Usage:  app <cmd> [param1] ..."
     echo ""
-    echo "Project Initialize"
-    echo "    purge    Clear the data"
-    echo "    setup    Build and create"
-    echo "    fetch    Pull upstream image"
-    echo "    build    Building an image"
-    echo "    create   Initialize container"
+    help_setup
     echo ""
-    echo "Operation and maintenance"
-    echo "    start    Run the container"
-    echo "    stop     Stop the container"
-    echo "    status   Check alive status"
+    help_start
     echo ""
+    help_mysql
+    echo ""
+    help_ohter
+}
+
+function help_mysql {
     echo "Operation with MySQL"
     echo "    save     Dump mysql database"
     echo "    load     Load mysql sql file"
-    echo ""
-    echo "Development and other"
-    echo "    logs     Show container logs"
-    echo "    exec     Run command or bash"
-    echo "    help     Display this help"
 }
 
 function main_save {
@@ -85,6 +78,7 @@ function docker_run {
     myrun sudo docker run --name $AppName \
         --hostname $Tag \
         --network net-mzzb \
+        -v $Pwd/volume/app:/opt/app \
         -v $Pwd/volume/mysql:/var/lib/mysql \
         -e MYSQL_ROOT_PASSWORD=$DbPass \
         -p 3306:3306 \

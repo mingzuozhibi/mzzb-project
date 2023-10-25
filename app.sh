@@ -53,6 +53,9 @@ function myhelp {
     echo ""
     echo "Development and other"
     echo "    dev      Run mysql and rabbitmq"
+    echo "    ps       List docker containers"
+    echo "    clean    Remove unused images"
+    echo "    images   List docker images"
     echo "    help     Display this help"
 }
 
@@ -70,9 +73,9 @@ myfmt "32" " >> CMD: root/app $Cmd $*"
 # 主要程序
 case $Cmd in
 purge)
+    mysub -r $Cmd
     [ $(sudo docker network ls | grep net-mzzb | wc -l) -lt 0 ] &&
         myrun sudo docker network rm net-mzzb
-    mysub -r $Cmd
     ;;
 setup)
     mysub -r stop
@@ -81,17 +84,23 @@ setup)
     mysub $Cmd $1
     mycmd clean
     ;;
-fetch | build)
+fetch | pull | build)
     mysub $Cmd
     mycmd clean
     ;;
-create)
+create | run)
     mysub -r stop
     mysub $Cmd
     mycmd clean
     ;;
-clean)
+ps)
+    myrun sudo docker ps $@
+    ;;
+clean | prune)
     myrun sudo docker image prune -f
+    ;;
+images | ls)
+    myrun sudo docker image ls
     ;;
 start)
     mysub $Cmd
