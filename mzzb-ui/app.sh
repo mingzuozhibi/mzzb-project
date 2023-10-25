@@ -2,7 +2,7 @@
 
 # Variable
 Tag=mzzb-ui
-Upstream=nginx:1.25
+Upstream=nginx:stable
 
 Pwd=$(realpath $(dirname $0))
 Cmd=${1:-help} && shift
