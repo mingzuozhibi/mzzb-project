@@ -85,6 +85,7 @@ function docker_run {
     myrun sudo docker run --name $AppName \
         --hostname $Tag \
         --network net-mzzb \
+        -v $Pwd/volume/app:/opt/app \
         -v $Pwd/volume/mysql:/var/lib/mysql \
         -e MYSQL_ROOT_PASSWORD=$DbPass \
         -p 3306:3306 \

@@ -41,6 +41,7 @@ function docker_run {
     myrun sudo docker run --name $AppName \
         --hostname $Tag \
         --network net-mzzb \
+        -v $Pwd/volume/app:/opt/app \
         -v $Pwd/volume/rabbitmq:/var/lib/rabbitmq \
         -e RABBITMQ_DEFAULT_USER=admin \
         -e RABBITMQ_DEFAULT_PASS=admin \
