@@ -53,6 +53,9 @@ function myhelp {
     echo ""
     echo "Development and other"
     echo "    dev      Run mysql and rabbitmq"
+    echo "    ps       List docker containers"
+    echo "    clean    Remove unused images"
+    echo "    images   List docker images"
     echo "    help     Display this help"
 }
 
@@ -90,8 +93,14 @@ create | run)
     mysub $Cmd
     mycmd clean
     ;;
-clean)
+ps)
+    myrun sudo docker ps $@
+    ;;
+clean | prune)
     myrun sudo docker image prune -f
+    ;;
+images | ls)
+    myrun sudo docker image ls
     ;;
 start)
     mysub $Cmd
