@@ -70,9 +70,9 @@ myfmt "32" " >> CMD: root/app $Cmd $*"
 # 主要程序
 case $Cmd in
 purge)
+    mysub -r $Cmd
     [ $(sudo docker network ls | grep net-mzzb | wc -l) -lt 0 ] &&
         myrun sudo docker network rm net-mzzb
-    mysub -r $Cmd
     ;;
 setup)
     mysub -r stop
